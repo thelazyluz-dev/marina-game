@@ -446,3 +446,27 @@ const _rb5 = renderBoard; renderBoard = function () { _rb5(); const it = S.sel, 
 /* the drag preview tells the reason too */
 showPv = (o => function (t) { o(t); if (t && !t.ok && D) { const pv = $('#pv'); if (pv) pv.textContent = why(D.item, t.r, t.s).slice(0, 26); } })(showPv);
 </script>
+
+<script>
+/* ---------- v6: her sister calls twice a shift ---------- */
+const SIS = [
+  ['מרינה! מה מבשלים בשישי? אמא שואלת כבר שלוש פעמים', 'אני בעבודה! אחר כך'],
+  ['ראית מה אמא כתבה בקבוצה של המשפחה?! 😂', 'שולחת לך הודעה אחרי המשמרת'],
+  ['את יכולה לקחת את הילדים מהגן היום? רק היום, אני מבטיחה!', 'טוב... רק היום!'],
+  ['תקשיבי, קניתי שמלה. אני שולחת לך תמונה, תגידי לי בכנות', 'יפה! עכשיו תני לעבוד 😅'],
+  ['מרינה, יש לך מספר של רופא עור טוב? את מכירה את כולם שם', 'אני אבדוק לך בתורים...'],
+];
+let sisN = 0;
+function sisterCall() {
+  const [line, polite] = R(SIS), again = sisN > 0 && S.sisMissed;
+  const gen = () => ({ who: { n: '📞 אחותה של מרינה', av: '' }, phone: true, text: '📞 אחותה של מרינה: ' + (again ? 'למה את לא עונה לי?! 😤 ' + line : line), ch: [
+    { t: 'לענות (5 דקות)', f: () => { S.t += 5; add('patience', 12); marina('laugh'); toast('דקה עם אחותה, והיום נראה יותר טוב 💕'); S.sisMissed = false; } },
+    { t: polite, f: () => { add('patience', 4); marina('phone'); S.sisMissed = false; } },
+    { t: 'לסנן', f: () => { add('patience', -5); S.sisMissed = true; toast('היא תתקשר שוב... 😬'); } }] });
+  const saved = VIS.splice(0, VIS.length, gen); try { visit(); } finally { VIS.splice(0, VIS.length, ...saved); }
+  sisN++;
+}
+const _start6 = start; start = function () { _start6(); sisN = 0; S.sisMissed = false; S.sisAt = [120 + Math.random() * 90, 300 + Math.random() * 90]; };
+const _step6 = step; step = function (dt) { _step6(dt); if (!S.run || S.visitor || !S.sisAt) return; if (sisN < S.sisAt.length && S.t >= S.sisAt[sisN]) sisterCall(); };
+window.MG.sisterCall = sisterCall;
+</script>
